@@ -1,29 +1,36 @@
-module.exports = {
-  colors: {
-    primary: '#5865F2',   // Blurple Discord
-    success: '#57F287',   // Green
-    warning: '#FEE75C',   // Yellow
-    danger: '#ED4245',    // Red
-    info: '#3498DB',      // Blue
-    dark: '#2F3136'       // Dark Grey
-  },
-  // Default GIF image attached automatically to DM embeds if none provided
-  defaultGif: 'https://media.discordapp.net/attachments/1083436034177536060/1083436402324181052/line.gif',
-  emojis: {
-    shield: '🛡️',
-    ticket: '🎫',
-    welcome: '👋',
-    logs: '📜',
-    success: '✅',
-    error: '❌',
-    warning: '⚠️',
-    info: 'ℹ️',
-    ban: '🔨',
-    kick: '🥾',
-    mute: '🔇',
-    lock: '🔒',
-    unlock: '🔓',
-    trash: '🗑️',
-    stats: '📊'
+const path = require('path');
+const fs = require('fs');
+const dotenv = require('dotenv');
+
+const envPath = path.join(__dirname, '../../.env');
+if (fs.existsSync(envPath)) {
+  const envConfig = dotenv.parse(fs.readFileSync(envPath));
+  for (const k in envConfig) {
+    process.env[k] = envConfig[k];
   }
+}
+
+module.exports = {
+  token: process.env.DISCORD_TOKEN,
+  clientId: process.env.CLIENT_ID,
+  guildId: process.env.GUILD_ID || null, // Optional: for fast testing in a specific guild
+  
+  // Default Location Settings
+  defaultCity: process.env.DEFAULT_CITY || 'Cairo',
+  defaultCountry: process.env.DEFAULT_COUNTRY || 'Egypt',
+  defaultTimezone: process.env.DEFAULT_TIMEZONE || 'Africa/Cairo',
+  
+  // Embed Colors
+  colors: {
+    primary: 0x1E824C,   // Deep Islamic Green (#1E824C)
+    gold: 0xD4AF37,      // Islamic Gold (#D4AF37)
+    cyan: 0x00A86B,      // Jade Green (#00A86B)
+    error: 0xE74C3C,     // Crimson Red (#E74C3C)
+    info: 0x3498DB       // Sky Blue (#3498DB)
+  },
+  
+  footerText: 'اللهم صل وسلم على نبينا محمد ﷺ',
+  
+  // AlAdhan API endpoint
+  aladhanApiUrl: 'http://api.aladhan.com/v1/timingsByCity'
 };

@@ -1,25 +1,20 @@
 const fs = require('fs');
 const path = require('path');
+const Logger = require('../utils/logger');
 
-function loadEvents(client) {
+module.exports = (client) => {
   const eventsPath = path.join(__dirname, '../events');
   const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
-  let loadedCount = 0;
-
   for (const file of eventFiles) {
-    const filePath = path.join(eventsPath, file);
-    const event = require(filePath);
-
-    if (event.once) {
-      client.once(event.name, (...args) => event.execute(...args));
-    } else {
-      client.on(event.name, (...args) => event.execute(...args));
+    const event = require(path.join(eventsPath, file));
+    if (event.name && event.execute) {
+      if (event.once) {
+        client.once(event.name, (...args) => event.execute(...args, client));
+      } else {
+        client.on(event.name, (...args) => event.execute(...args, client));
+      }
+      Logger.info(`Loaded event listener: ${event.name}`);
     }
-    loadedCount++;
   }
-
-  console.log(`✅ [EventHandler] Loaded ${loadedCount} events successfully.`);
-}
-
-module.exports = { loadEvents };
+};
